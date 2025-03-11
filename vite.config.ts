@@ -18,7 +18,10 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Force date-fns à utiliser une version spécifique
+      "date-fns": path.resolve(__dirname, "node_modules/date-fns"),
     },
+    dedupe: ['date-fns', 'react-day-picker']
   },
   // Optimize build output for production
   build: {
@@ -31,20 +34,35 @@ export default defineConfig(({ mode }) => ({
         drop_debugger: true,
       },
     },
-    // Add rollup options to better handle dependencies
+    // Gérer plus précisément les dépendances et les avertissements
     rollupOptions: {
       onwarn(warning, warn) {
-        // Ignore certain warnings
+        // Ignore specific warnings
         if (warning.code === 'MODULE_LEVEL_DIRECTIVE' || 
-            warning.message.includes('date-fns')) {
+            warning.message.includes('date-fns') ||
+            warning.message.includes('peer dependency') ||
+            warning.message.includes('react-day-picker')) {
           return;
         }
         warn(warning);
+      },
+      // Ajouter des external pour éviter les duplications
+      external: [],
+      // Optimiser la génération du bundle
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          dateFns: ['date-fns']
+        }
       }
     }
   },
   optimizeDeps: {
-    include: ['date-fns'],
-    force: true
+    include: ['date-fns', 'react-day-picker'],
+    force: true,
+    esbuildOptions: {
+      // Résoudre les problèmes de version
+      resolveExternal: true
+    }
   }
 }));

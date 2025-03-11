@@ -36,6 +36,7 @@ const ListingDetail = () => {
     formatPriceFCFA,
   } = useListingDetail();
 
+  // Gérer le cas où les données sont encore en chargement
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -47,6 +48,7 @@ const ListingDetail = () => {
     );
   }
 
+  // Gérer le cas où l'annonce n'a pas été trouvée
   if (!listing) {
     return (
       <div className="min-h-screen bg-gray-50">

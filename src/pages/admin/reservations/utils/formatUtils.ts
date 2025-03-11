@@ -1,14 +1,20 @@
 
 import { Reservation } from "@/hooks/reservations"; 
 import { toast } from "sonner";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 
-// Format date strings to locale format
+// Format date strings to locale format with error handling
 export const formatDate = (dateString: string) => {
   try {
-    return format(new Date(dateString), 'dd/MM/yyyy');
+    // S'assurer que la date est valide avant de la formater
+    const date = parseISO(dateString);
+    if (isNaN(date.getTime())) {
+      console.error("Invalid date:", dateString);
+      return dateString;
+    }
+    return format(date, 'dd/MM/yyyy');
   } catch (error) {
-    console.error("Error formatting date:", error);
+    console.error("Error formatting date:", error, dateString);
     return dateString;
   }
 };

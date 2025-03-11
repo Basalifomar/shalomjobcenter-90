@@ -25,11 +25,21 @@ export const StatusBanner: React.FC = memo(() => {
 
   // Safety check for currentMessage
   const messageText = useMemo(() => {
-    if (!currentMessage) return "";
-    return typeof currentMessage === 'object' && currentMessage !== null 
-      ? currentMessage.text || "" 
-      : "";
+    try {
+      if (!currentMessage) return "";
+      return typeof currentMessage === 'object' && currentMessage !== null 
+        ? currentMessage.text || "" 
+        : "";
+    } catch (error) {
+      console.error("Error processing message:", error);
+      return "";
+    }
   }, [currentMessage]);
+
+  // Si pas de message valide, ne pas afficher le banner
+  if (!messageText) {
+    return null;
+  }
 
   return (
     <AnimatePresence>

@@ -2,6 +2,7 @@
 import React from "react";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/language";
+import { format } from "date-fns";
 
 interface DateRangePickerProps {
   startDate: string;
@@ -22,6 +23,19 @@ const DateRangePicker = ({
   
   // Get today's date in YYYY-MM-DD format for min attribute
   const today = new Date().toISOString().split("T")[0];
+
+  // Fonction sécurisée pour formater les dates
+  const formatDateSafely = (dateString: string) => {
+    try {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString;
+      return format(date, 'yyyy-MM-dd');
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return dateString;
+    }
+  };
 
   return (
     <div className={`border rounded-lg overflow-hidden ${className}`}>

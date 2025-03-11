@@ -17,31 +17,52 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ reservations }) => {
   const [reservationsOnDate, setReservationsOnDate] = useState<Reservation[]>([]);
   const { t } = useLanguage();
   
-  // Convertir les dates de chaîne en objets Date
-  const reservationsWithDates = reservations.map(res => ({
-    ...res,
-    checkInDate: new Date(res.checkIn),
-    checkOutDate: new Date(res.checkOut)
-  }));
+  // Convertir les dates de chaîne en objets Date avec gestion d'erreur
+  const reservationsWithDates = reservations.map(res => {
+    try {
+      return {
+        ...res,
+        checkInDate: new Date(res.checkIn),
+        checkOutDate: new Date(res.checkOut)
+      };
+    } catch (error) {
+      console.error("Error converting dates:", error);
+      return {
+        ...res,
+        checkInDate: new Date(),
+        checkOutDate: new Date()
+      };
+    }
+  });
   
-  // Fonction pour déterminer si une date a des réservations
+  // Fonction pour déterminer si une date a des réservations avec gestion d'erreur
   const isDayWithReservation = (date: Date) => {
-    return reservationsWithDates.some(res => {
-      const checkIn = res.checkInDate;
-      const checkOut = res.checkOutDate;
-      return date >= checkIn && date <= checkOut;
-    });
+    try {
+      return reservationsWithDates.some(res => {
+        const checkIn = res.checkInDate;
+        const checkOut = res.checkOutDate;
+        return date >= checkIn && date <= checkOut;
+      });
+    } catch (error) {
+      console.error("Error checking reservation date:", error);
+      return false;
+    }
   };
   
   // Fonction pour récupérer les réservations d'une date donnée
   const getReservationsForDate = (date: Date) => {
-    const reservationsOnDate = reservationsWithDates.filter(res => {
-      const checkIn = res.checkInDate;
-      const checkOut = res.checkOutDate;
-      return date >= checkIn && date <= checkOut;
-    });
-    
-    setReservationsOnDate(reservationsOnDate);
+    try {
+      const reservationsOnDate = reservationsWithDates.filter(res => {
+        const checkIn = res.checkInDate;
+        const checkOut = res.checkOutDate;
+        return date >= checkIn && date <= checkOut;
+      });
+      
+      setReservationsOnDate(reservationsOnDate);
+    } catch (error) {
+      console.error("Error getting reservations for date:", error);
+      setReservationsOnDate([]);
+    }
   };
   
   const handleSelect = (date: Date | undefined) => {
@@ -67,9 +88,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ reservations }) => {
     }
   };
 
-  // Format date strings to locale format
+  // Format date strings to locale format with error handling
   const formatDateString = (dateString: string) => {
-    return format(new Date(dateString), 'dd/MM/yyyy');
+    try {
+      return format(new Date(dateString), 'dd/MM/yyyy');
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return dateString;
+    }
   };
 
   return (
