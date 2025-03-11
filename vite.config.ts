@@ -1,11 +1,11 @@
 
-import { defineConfig, ConfigEnv } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }: ConfigEnv) => ({
+export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
@@ -46,8 +46,6 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
         }
         warn(warning);
       },
-      // Add externals to avoid duplications
-      external: [],
       // Optimize bundle generation
       output: {
         manualChunks: {
@@ -59,7 +57,7 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
   },
   optimizeDeps: {
     include: ['date-fns', 'react-day-picker'],
-    force: true,
-    // Remove the problematic esbuildOptions that was causing the type error
+    force: true
+    // Suppression de esbuildOptions qui causait l'erreur TypeScript
   }
 }));

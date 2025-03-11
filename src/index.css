@@ -1,3 +1,4 @@
+
 /* Base styles and variables */
 @import './styles/base.css';
 
@@ -84,4 +85,19 @@ button {
   border-radius: 0.25rem !important;
   font-size: 0.875rem !important;
   line-height: 1.25rem !important;
+}
+
+/* Fix critical dependency issues with date inputs */
+input[type="date"] {
+  pointer-events: auto !important;
+  appearance: textfield;
+}
+
+/* Ensure date pickers are clickable */
+.react-datepicker,
+.react-datepicker__month-container,
+.react-datepicker__day,
+.react-datepicker__day-name,
+.react-datepicker__navigation {
+  pointer-events: auto !important;
 }

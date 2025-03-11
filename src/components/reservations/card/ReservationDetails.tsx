@@ -9,23 +9,47 @@ interface ReservationDetailsProps {
 }
 
 export const ReservationDetails = ({ reservation }: ReservationDetailsProps) => {
-  // Formater le prix en FCFA
-  const priceFCFA = Math.round(reservation.totalPrice * 655.957).toLocaleString('fr-FR');
+  // Formater le prix en FCFA avec gestion des erreurs
+  const formatPriceFCFA = (price: number) => {
+    try {
+      if (typeof price !== 'number' || isNaN(price)) {
+        return "0 FCFA";
+      }
+      return Math.round(price * 655.957).toLocaleString('fr-FR');
+    } catch (error) {
+      console.error("Error formatting price:", error);
+      return "0 FCFA";
+    }
+  };
 
   // Fonction sécurisée pour formater les dates
   const formatDate = (dateString: string) => {
     try {
-      const date = parseISO(dateString);
-      if (isNaN(date.getTime())) {
-        console.error("Invalid date:", dateString);
+      if (!dateString) {
+        return "Date non disponible";
+      }
+      
+      // Vérifier si la date est déjà au format DD/MM/YYYY
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
         return dateString;
       }
+      
+      const date = parseISO(dateString);
+      
+      if (isNaN(date.getTime())) {
+        console.error("Invalid date:", dateString);
+        return "Date invalide";
+      }
+      
       return format(date, 'dd/MM/yyyy');
     } catch (error) {
-      console.error("Error formatting date:", error);
-      return dateString;
+      console.error("Error formatting date:", error, dateString);
+      return "Date non disponible";
     }
   };
+
+  // Récupérer en toute sécurité le prix formaté
+  const priceFCFA = formatPriceFCFA(reservation.totalPrice);
 
   return (
     <div className="space-y-3 text-sm">
@@ -48,7 +72,7 @@ export const ReservationDetails = ({ reservation }: ReservationDetailsProps) => 
           <Users className="h-4 w-4 mr-2 text-gray-500" />
           <span className="text-gray-500">Voyageurs:</span>
         </div>
-        <span className="font-medium">{reservation.guests}</span>
+        <span className="font-medium">{reservation.guests || 0}</span>
       </div>
       <div className="flex justify-between">
         <div className="flex items-center">

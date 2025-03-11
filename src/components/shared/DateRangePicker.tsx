@@ -28,12 +28,30 @@ const DateRangePicker = ({
   const formatDateSafely = (dateString: string) => {
     try {
       if (!dateString) return "";
+      // Vérifier si la date est déjà au format YYYY-MM-DD
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString;
+      
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return dateString;
       return format(date, 'yyyy-MM-dd');
     } catch (error) {
       console.error("Error formatting date:", error);
       return dateString;
+    }
+  };
+
+  // Gestion des erreurs pour les dates invalides
+  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const newDate = e.target.value;
+      setStartDate(newDate);
+      
+      // Si la date de fin est antérieure à la nouvelle date de début, mettre à jour la date de fin
+      if (endDate && new Date(endDate) < new Date(newDate)) {
+        setEndDate(newDate);
+      }
+    } catch (error) {
+      console.error("Error changing start date:", error);
     }
   };
 
@@ -44,9 +62,9 @@ const DateRangePicker = ({
           <label className="block text-xs text-gray-500 mb-1">{t('ARRIVAL') || 'ARRIVÉE'}</label>
           <input
             type="date"
-            className="w-full focus:outline-none text-sm"
+            className="w-full focus:outline-none text-sm pointer-events-auto"
             value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            onChange={handleStartDateChange}
             min={today}
           />
         </div>
@@ -54,7 +72,7 @@ const DateRangePicker = ({
           <label className="block text-xs text-gray-500 mb-1">{t('DEPARTURE') || 'DÉPART'}</label>
           <input
             type="date"
-            className="w-full focus:outline-none text-sm"
+            className="w-full focus:outline-none text-sm pointer-events-auto"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             min={startDate || today}

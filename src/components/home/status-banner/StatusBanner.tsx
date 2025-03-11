@@ -27,9 +27,17 @@ export const StatusBanner: React.FC = memo(() => {
   const messageText = useMemo(() => {
     try {
       if (!currentMessage) return "";
-      return typeof currentMessage === 'object' && currentMessage !== null 
-        ? currentMessage.text || "" 
-        : "";
+      
+      // Handle different message formats
+      if (typeof currentMessage === 'string') {
+        return currentMessage;
+      }
+      
+      if (typeof currentMessage === 'object' && currentMessage !== null) {
+        return currentMessage.text || "";
+      }
+      
+      return "";
     } catch (error) {
       console.error("Error processing message:", error);
       return "";
