@@ -4,7 +4,7 @@
 [build]
   # Directory to publish (the default build output directory for Vite)
   publish = "dist"
-  # Build command avec les options pour ignorer les conflits de dépendances
+  # Build command with options to ignore dependency conflicts
   command = "npm install --no-audit --legacy-peer-deps && npm run build"
   # Environment variables
   environment = { NODE_VERSION = "18", NPM_FLAGS = "--no-audit --legacy-peer-deps" }
@@ -25,3 +25,18 @@
 [build.environment]
   YARN_ENABLE_IMMUTABLE_INSTALLS = "false"
   NPM_CONFIG_LEGACY_PEER_DEPS = "true"
+  VITE_DISABLE_ESLINT = "true"
+  VITE_PRESERVE_SYMLINKS = "true"
+  NODE_OPTIONS = "--max-old-space-size=4096"
+
+# Netlify build plugins to help with common issues
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+  [plugins.inputs]
+    # Disable telemetry
+    telemetry = false
+
+[[plugins]]
+  package = "netlify-plugin-cache"
+  [plugins.inputs]
+    paths = ["node_modules/.cache", ".netlify/cache"]
