@@ -1,11 +1,11 @@
 
-import { defineConfig } from "vite";
+import { defineConfig, ConfigEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode }: ConfigEnv) => ({
   server: {
     host: "::",
     port: 8080,
@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      // Force date-fns à utiliser une version spécifique
+      // Force date-fns to use a specific version
       "date-fns": path.resolve(__dirname, "node_modules/date-fns"),
     },
     dedupe: ['date-fns', 'react-day-picker']
@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => ({
         drop_debugger: true,
       },
     },
-    // Gérer plus précisément les dépendances et les avertissements
+    // More precisely manage dependencies and warnings
     rollupOptions: {
       onwarn(warning, warn) {
         // Ignore specific warnings
@@ -46,9 +46,9 @@ export default defineConfig(({ mode }) => ({
         }
         warn(warning);
       },
-      // Ajouter des external pour éviter les duplications
+      // Add externals to avoid duplications
       external: [],
-      // Optimiser la génération du bundle
+      // Optimize bundle generation
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
@@ -60,9 +60,6 @@ export default defineConfig(({ mode }) => ({
   optimizeDeps: {
     include: ['date-fns', 'react-day-picker'],
     force: true,
-    esbuildOptions: {
-      // Résoudre les problèmes de version
-      resolveExternal: true
-    }
+    // Remove the problematic esbuildOptions that was causing the type error
   }
 }));
